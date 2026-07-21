@@ -38,6 +38,13 @@ export class PedidoRepository {
         )
     }
 
+    // Pedidos que incluyen alguno de los productos indicados (ventas de un vendedor)
+    async getPedidosByProductoIds(productoIds) {
+        return await this._popularPedido(
+            this.model.find({ 'items.producto': { $in: productoIds } }).sort({ fechaCreacion: -1 })
+        )
+    }
+
     async savePedido(pedido) {
         await pedido.save()
         return await this.getPedidoById(pedido._id.toString())

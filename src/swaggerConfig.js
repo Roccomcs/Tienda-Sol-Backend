@@ -195,6 +195,20 @@ export const specs = {
             }
         },
         "/productos": {
+            get: {
+                tags: ["Productos"],
+                summary: "Catálogo global: buscar productos de todo el marketplace con filtros, orden y paginación",
+                parameters: [
+                    { name: "q", in: "query", schema: { type: "string" }, description: "Término (nombre, categoría, descripción)" },
+                    { name: "categoria", in: "query", schema: { type: "string" }, description: "ID o nombre de categoría" },
+                    { name: "precioMin", in: "query", schema: { type: "number" } },
+                    { name: "precioMax", in: "query", schema: { type: "number" } },
+                    { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+                    { name: "limit", in: "query", schema: { type: "integer", default: 10 } },
+                    { name: "orden", in: "query", schema: { type: "string", enum: ["precioAsc", "precioDesc", "masVendido"] } }
+                ],
+                responses: { 200: { description: "Página de productos" } }
+            },
             post: {
                 tags: ["Productos"],
                 summary: "Publicar un producto (rol VENDEDOR)",
@@ -286,6 +300,14 @@ export const specs = {
                 summary: "Historial de pedidos de un usuario",
                 parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
                 responses: { 200: { description: "Lista de pedidos" }, 404: { description: "Usuario no encontrado" } }
+            }
+        },
+        "/usuarios/{id}/ventas": {
+            get: {
+                tags: ["Pedidos"],
+                summary: "Pedidos recibidos por un vendedor (incluyen sus productos)",
+                parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" }, description: "ID del vendedor" }],
+                responses: { 200: { description: "Lista de pedidos recibidos" }, 404: { description: "Vendedor no encontrado" } }
             }
         },
         "/usuarios/{usuarioId}/notificaciones": {

@@ -42,22 +42,38 @@ export class ProductoController {
         }
     }
 
+    // GET /productos — búsqueda global de productos (catálogo del marketplace)
+    async buscarProductos(req, res, next) {
+        try {
+            const result = await this.productoService.buscarProductos(this._filtrosDesdeQuery(req))
+            return res.status(result.status).json(result.data)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     // GET /usuarios/:id/productos — búsqueda de productos de un vendedor con filtros
     async buscarProductosDeVendedor(req, res, next) {
         try {
             const vendedorId = req.params.id
-            const filtros = {
-                q: req.query.q,
-                precioMin: req.query.precioMin,
-                precioMax: req.query.precioMax,
-                page: req.query.page,
-                limit: req.query.limit,
-                orden: req.query.orden
-            }
-            const result = await this.productoService.buscarProductosDeVendedor(vendedorId, filtros)
+            const result = await this.productoService.buscarProductosDeVendedor(vendedorId, this._filtrosDesdeQuery(req))
             return res.status(result.status).json(result.data)
         } catch (error) {
             next(error)
+        }
+    }
+
+    // Arma el objeto de filtros a partir de los query params
+    _filtrosDesdeQuery(req) {
+        return {
+            q: req.query.q,
+            precioMin: req.query.precioMin,
+            precioMax: req.query.precioMax,
+            categoria: req.query.categoria,
+            incluirInactivos: req.query.incluirInactivos,
+            page: req.query.page,
+            limit: req.query.limit,
+            orden: req.query.orden
         }
     }
 }

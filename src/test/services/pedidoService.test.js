@@ -9,6 +9,7 @@ import {
     PedidoEstadoInvalidoError
 } from '../../middlewares/pedidoErrors.js';
 import { ProductoNoEncontradoError, ProductoSinStockError } from '../../middlewares/productoErrors.js';
+import { UsuarioNoEncontradoError } from '../../middlewares/usuarioErrors.js';
 import { UsuarioNoAutorizadoError } from '../../middlewares/authErrors.js';
 
 describe('PedidoService', () => {
@@ -51,12 +52,14 @@ describe('PedidoService', () => {
             createPedido: jest.fn(),
             getPedidoById: jest.fn(),
             getPedidosByCompradorId: jest.fn(),
+            getPedidosByProductoIds: jest.fn(),
             savePedido: jest.fn()
         };
         mockProductoRepository = {
             getProductoById: jest.fn(),
             reducirStock: jest.fn(),
-            aumentarStock: jest.fn()
+            aumentarStock: jest.fn(),
+            getIdsByVendedor: jest.fn()
         };
         mockUsuarioRepository = { getUsuarioById: jest.fn() };
         mockNotificacionService = { crearNotificacionesPorPedido: jest.fn() };
@@ -167,6 +170,23 @@ describe('PedidoService', () => {
             const result = await pedidoService.getPedidosByUsuarioId(compradorId);
             expect(result.status).toBe(200);
             expect(result.data).toHaveLength(1);
+        });
+    });
+
+    describe('getVentasDelVendedor', () => {
+        test('Debe devolver los pedidos que incluyen productos del vendedor', async () => {
+            mockUsuarioRepository.getUsuarioById.mockResolvedValue({ _id: vendedorId });
+            mockProductoRepository.getIdsByVendedor.mockResolvedValue([productoId]);
+            mockPedidoRepository.getPedidosByProductoIds.mockResolvedValue([pedidoDominio()]);
+            const result = await pedidoService.getVentasDelVendedor(vendedorId);
+            expect(result.status).toBe(200);
+            expect(result.data).toHaveLength(1);
+            expect(mockPedidoRepository.getPedidosByProductoIds).toHaveBeenCalledWith([productoId]);
+        });
+
+        test('Debe lanzar error si el vendedor no existe', async () => {
+            mockUsuarioRepository.getUsuarioById.mockResolvedValue(null);
+            await expect(pedidoService.getVentasDelVendedor(vendedorId)).rejects.toThrow(UsuarioNoEncontradoError);
         });
     });
 });

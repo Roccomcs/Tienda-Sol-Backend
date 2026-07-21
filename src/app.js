@@ -35,7 +35,13 @@ import { NotificacionController } from "./controllers/notificacionController.js"
 
 const app = express()
 
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }))
+// Se permiten el origen del frontend (configurable) y los puertos de desarrollo habituales
+const origenesPermitidos = [
+    process.env.FRONTEND_URL || 'http://localhost:3001',
+    'http://localhost:3000',
+    'http://localhost:3001'
+]
+app.use(cors({ origin: origenesPermitidos }))
 app.use(express.json())
 
 const server = new Server(app)

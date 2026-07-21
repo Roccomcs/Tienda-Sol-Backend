@@ -43,4 +43,14 @@ export class PedidoController {
             next(error)
         }
     }
+
+    // GET /usuarios/:id/ventas — pedidos recibidos por el vendedor
+    async getVentasDelVendedor(req, res, next) {
+        try {
+            const result = await this.pedidoService.getVentasDelVendedor(req.params.id)
+            return res.status(result.status).json(result.data)
+        } catch (error) {
+            next(error)
+        }
+    }
 }

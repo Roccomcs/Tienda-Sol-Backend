@@ -1,0 +1,1230 @@
+{
+  "info": {
+    "name": "Tienda Sol",
+    "_postman_id": "tienda-sol-collection-2c-2025",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección de la API REST de Tienda Sol (TP Integrador 2C 2025)."
+  },
+  "item": [
+    {
+      "name": "CRUDs",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/auth/register",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Nuevo Usuario\",\n  \"email\": \"nuevo{{$timestamp}}@tiendasol.com\",\n  \"telefono\": \"1100000000\",\n  \"password\": \"password123\",\n  \"tipo\": \"COMPRADOR\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                      "pm.test(\"Devuelve accessToken\", () => pm.expect(pm.response.json()).to.have.property(\"accessToken\"));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Login Vendedor",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/auth/login",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"ana@tiendasol.com\",\n  \"password\": \"password123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "var d = pm.response.json();",
+                      "pm.collectionVariables.set(\"accessTokenVendedor\", d.accessToken);",
+                      "pm.collectionVariables.set(\"vendedorId\", d.usuario.id);"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Login Comprador",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/auth/login",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"carlos@tiendasol.com\",\n  \"password\": \"password123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "var d = pm.response.json();",
+                      "pm.collectionVariables.set(\"accessTokenComprador\", d.accessToken);",
+                      "pm.collectionVariables.set(\"compradorId\", d.usuario.id);"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Logout",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/auth/logout",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Usuarios",
+          "item": [
+            {
+              "name": "Listar Usuarios",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Obtener Usuario por ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Categorías",
+          "item": [
+            {
+              "name": "Listar Categorías",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/categorias",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "categorias"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Crear Categoría",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/categorias",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "categorias"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Juguetería\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 201 o 409\", () => pm.expect([201,409]).to.include(pm.response.code));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Obtener Categoría por ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/categorias/{{categoriaId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "categorias",
+                    "{{categoriaId}}"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Eliminar Categoría",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/categorias/{{categoriaId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "categorias",
+                    "{{categoriaId}}"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Productos",
+          "item": [
+            {
+              "name": "Crear Producto (Vendedor)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/productos",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "productos"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"titulo\": \"Mouse inalámbrico\",\n  \"descripcion\": \"Mouse ergonómico\",\n  \"categorias\": [],\n  \"precio\": 8999,\n  \"moneda\": \"ARS\",\n  \"stock\": 30\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenVendedor}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.response.to.have.status(201));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Obtener Producto por ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/productos/{{productoId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "productos",
+                    "{{productoId}}"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Buscar Productos del Vendedor",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/productos?q=&precioMin=&precioMax=&orden=masVendido&page=1&limit=10",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "productos"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": ""
+                    },
+                    {
+                      "key": "precioMin",
+                      "value": ""
+                    },
+                    {
+                      "key": "precioMax",
+                      "value": ""
+                    },
+                    {
+                      "key": "orden",
+                      "value": "masVendido"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Actualizar Producto (Vendedor)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/productos/{{productoId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "productos",
+                    "{{productoId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"precio\": 9999\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenVendedor}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Eliminar Producto (Vendedor)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/productos/{{productoId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "productos",
+                    "{{productoId}}"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenVendedor}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Pedidos",
+          "item": [
+            {
+              "name": "Crear Pedido (Comprador)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/pedidos",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "pedidos"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productoId\": \"{{productoId}}\",\n      \"cantidad\": 1\n    }\n  ],\n  \"direccionEntrega\": {\n    \"calle\": \"Av. Medrano\",\n    \"altura\": \"951\",\n    \"ciudad\": \"CABA\",\n    \"provincia\": \"Buenos Aires\",\n    \"pais\": \"Argentina\"\n  }\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenComprador}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Marcar Enviado (Vendedor)",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/pedidos/{{pedidoId}}/enviar",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "pedidos",
+                    "{{pedidoId}}",
+                    "enviar"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenVendedor}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Cancelar Pedido (Comprador)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/pedidos/{{pedidoId}}/cancelar",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "pedidos",
+                    "{{pedidoId}}",
+                    "cancelar"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"motivo\": \"Me arrepentí\"\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenComprador}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Historial de Pedidos del Usuario",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{compradorId}}/pedidos",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{compradorId}}",
+                    "pedidos"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Notificaciones",
+          "item": [
+            {
+              "name": "Notificaciones No Leídas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/notificaciones?leida=false",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "notificaciones"
+                  ],
+                  "query": [
+                    {
+                      "key": "leida",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Notificaciones Leídas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/notificaciones?leida=true",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "notificaciones"
+                  ],
+                  "query": [
+                    {
+                      "key": "leida",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            },
+            {
+              "name": "Marcar Notificación Leída",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/notificaciones/{{notificacionId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "notificaciones",
+                    "{{notificacionId}}"
+                  ]
+                }
+              },
+              "event": [],
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tests",
+      "item": [
+        {
+          "name": "1. Flujo completo",
+          "item": [
+            {
+              "name": "1.1 - Healthcheck",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/health",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "pm.test(\"Sistema operativo\", () => pm.expect(pm.response.json().status).to.eql(\"ok\"));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.2 - Login Vendedor",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/auth/login",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"ana@tiendasol.com\",\n  \"password\": \"password123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "var d = pm.response.json();",
+                      "pm.test(\"Devuelve accessToken\", () => pm.expect(d).to.have.property(\"accessToken\"));",
+                      "pm.collectionVariables.set(\"accessTokenVendedor\", d.accessToken);",
+                      "pm.collectionVariables.set(\"vendedorId\", d.usuario.id);"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.3 - Login Comprador",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/auth/login",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"carlos@tiendasol.com\",\n  \"password\": \"password123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "var d = pm.response.json();",
+                      "pm.collectionVariables.set(\"accessTokenComprador\", d.accessToken);",
+                      "pm.collectionVariables.set(\"compradorId\", d.usuario.id);"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.4 - Crear Producto (Vendedor)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/productos",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "productos"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"titulo\": \"Producto Flujo E2E\",\n  \"descripcion\": \"Producto de prueba\",\n  \"categorias\": [],\n  \"precio\": 5000,\n  \"moneda\": \"ARS\",\n  \"stock\": 10\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenVendedor}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                      "var p = pm.response.json();",
+                      "pm.test(\"Devuelve ID\", () => pm.expect(p).to.have.property(\"id\"));",
+                      "pm.collectionVariables.set(\"productoId\", p.id);"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.5 - Buscar Productos del Vendedor",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/productos?orden=masVendido&page=1&limit=10",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "productos"
+                  ],
+                  "query": [
+                    {
+                      "key": "orden",
+                      "value": "masVendido"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "var d = pm.response.json();",
+                      "pm.test(\"Tiene items\", () => pm.expect(d.items.length).to.be.above(0));",
+                      "pm.test(\"Tiene paginación\", () => pm.expect(d).to.have.property(\"totalPaginas\"));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.6 - Crear Pedido (Comprador)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/pedidos",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "pedidos"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"productoId\": \"{{productoId}}\",\n      \"cantidad\": 2\n    }\n  ],\n  \"direccionEntrega\": {\n    \"calle\": \"Av. Medrano\",\n    \"altura\": \"951\",\n    \"ciudad\": \"CABA\",\n    \"provincia\": \"Buenos Aires\",\n    \"pais\": \"Argentina\"\n  }\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenComprador}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                      "var p = pm.response.json();",
+                      "pm.collectionVariables.set(\"pedidoId\", p.id);",
+                      "pm.test(\"Estado PENDIENTE\", () => pm.expect(p.estado).to.eql(\"PENDIENTE\"));",
+                      "pm.test(\"Total correcto\", () => pm.expect(p.total).to.eql(10000));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.7 - Notificaciones del Vendedor (no leídas)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/notificaciones?leida=false",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "notificaciones"
+                  ],
+                  "query": [
+                    {
+                      "key": "leida",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "var d = pm.response.json();",
+                      "pm.test(\"Hay notificación de pedido\", () => pm.expect(d.length).to.be.above(0));",
+                      "pm.collectionVariables.set(\"notificacionId\", d[0].id);"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.8 - Marcar Notificación Leída (Vendedor)",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{vendedorId}}/notificaciones/{{notificacionId}}",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{vendedorId}}",
+                    "notificaciones",
+                    "{{notificacionId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "pm.test(\"Notificación leída\", () => pm.expect(pm.response.json().leida).to.eql(true));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.9 - Marcar Pedido Enviado (Vendedor)",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/pedidos/{{pedidoId}}/enviar",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "pedidos",
+                    "{{pedidoId}}",
+                    "enviar"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenVendedor}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "pm.test(\"Estado ENVIADO\", () => pm.expect(pm.response.json().estado).to.eql(\"ENVIADO\"));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.10 - Notificaciones del Comprador (no leídas)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{compradorId}}/notificaciones?leida=false",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{compradorId}}",
+                    "notificaciones"
+                  ],
+                  "query": [
+                    {
+                      "key": "leida",
+                      "value": "false"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "pm.test(\"Comprador notificado del envío\", () => pm.expect(pm.response.json().length).to.be.above(0));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.11 - Historial de Pedidos (Comprador)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url_base}}/usuarios/{{compradorId}}/pedidos",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{compradorId}}",
+                    "pedidos"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "pm.test(\"Tiene pedidos\", () => pm.expect(pm.response.json().length).to.be.above(0));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "1.12 - Cancelar Pedido Enviado (debe fallar)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{url_base}}/pedidos/{{pedidoId}}/cancelar",
+                  "host": [
+                    "{{url_base}}"
+                  ],
+                  "path": [
+                    "pedidos",
+                    "{{pedidoId}}",
+                    "cancelar"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"motivo\": \"Prueba de regla\"\n}"
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessTokenComprador}}",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Status 409 (no se puede cancelar enviado)\", () => pm.response.to.have.status(409));"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "url_base",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessTokenVendedor",
+      "value": ""
+    },
+    {
+      "key": "accessTokenComprador",
+      "value": ""
+    },
+    {
+      "key": "vendedorId",
+      "value": ""
+    },
+    {
+      "key": "compradorId",
+      "value": ""
+    },
+    {
+      "key": "categoriaId",
+      "value": ""
+    },
+    {
+      "key": "productoId",
+      "value": ""
+    },
+    {
+      "key": "pedidoId",
+      "value": ""
+    },
+    {
+      "key": "notificacionId",
+      "value": ""
+    }
+  ]
+}

@@ -70,11 +70,26 @@ export class ProductoRepository {
         )
     }
 
-    // Búsqueda de productos de un vendedor con filtros, orden y paginación
-    async buscarProductosDeVendedor({ vendedorId, q, precioMin, precioMax, categoriaIds, page = 1, limit = 10, orden }) {
+    // Devuelve los IDs de los productos publicados por un vendedor
+    async getIdsByVendedor(vendedorId) {
         this._validateObjectId(vendedorId)
+        return await this.model.find({ vendedor: vendedorId }).distinct('_id')
+    }
 
-        const filtro = { vendedor: vendedorId, activo: true }
+    // Búsqueda de productos con filtros, orden y paginación.
+    // vendedorId opcional (catálogo global si no se envía). categoriaId filtra por categoría (AND).
+    // categoriaIds proviene del término de búsqueda por nombre de categoría (OR con titulo/descripcion).
+    async buscarProductos({ vendedorId, q, precioMin, precioMax, categoriaIds, categoriaId, incluirInactivos = false, page = 1, limit = 10, orden }) {
+        const filtro = {}
+
+        if (vendedorId) {
+            this._validateObjectId(vendedorId)
+            filtro.vendedor = vendedorId
+        }
+
+        if (!incluirInactivos) {
+            filtro.activo = true
+        }
 
         if (q) {
             filtro.$or = [
@@ -84,6 +99,10 @@ export class ProductoRepository {
             if (categoriaIds && categoriaIds.length > 0) {
                 filtro.$or.push({ categorias: { $in: categoriaIds } })
             }
+        }
+
+        if (categoriaId) {
+            filtro.categorias = categoriaId
         }
 
         if (precioMin !== undefined || precioMax !== undefined) {

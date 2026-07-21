@@ -147,6 +147,21 @@ export default class PedidoService {
         }
     }
 
+    // Ventas de un vendedor: pedidos que incluyen alguno de sus productos
+    async getVentasDelVendedor(vendedorId) {
+        const vendedor = await this.usuarioRepository.getUsuarioById(vendedorId)
+        if (!vendedor) {
+            throw new UsuarioNoEncontradoError(vendedorId)
+        }
+        const productoIds = await this.productoRepository.getIdsByVendedor(vendedorId)
+        const pedidos = await this.pedidoRepository.getPedidosByProductoIds(productoIds)
+        return {
+            success: true,
+            status: 200,
+            data: pedidoMapper.formatPedidos(pedidos)
+        }
+    }
+
     // Valida que el comprador autenticado sea el dueño del pedido
     _validarComprador(pedido, compradorId) {
         const idComprador = pedido.comprador?._id?.toString() || pedido.comprador?.toString()

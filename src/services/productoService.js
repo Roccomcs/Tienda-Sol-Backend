@@ -82,15 +82,22 @@ export default class ProductoService {
         }
     }
 
-    // Búsqueda de productos de un vendedor con filtros, orden y paginación
+    // Búsqueda global de productos (catálogo del marketplace) con filtros, orden y paginación
+    async buscarProductos(filtros = {}) {
+        return await this._buscar(filtros)
+    }
+
+    // Búsqueda de productos de un vendedor en particular (incluye inactivos si se solicita)
     async buscarProductosDeVendedor(vendedorId, filtros = {}) {
         const vendedor = await this.usuarioRepository.getUsuarioById(vendedorId)
         if (!vendedor) {
             throw new UsuarioNoEncontradoError(vendedorId)
         }
+        return await this._buscar({ ...filtros, vendedorId })
+    }
 
-        const { q, precioMin, precioMax, page = 1, limit = 10, orden } = filtros
-
+    // Lógica común de búsqueda: resuelve categorías por nombre y arma la página de resultados
+    async _buscar({ vendedorId, q, precioMin, precioMax, categoria, incluirInactivos, page = 1, limit = 10, orden } = {}) {
         // Si hay término de búsqueda, se buscan las categorías cuyo nombre coincida
         let categoriaIds = []
         if (q) {
@@ -98,12 +105,25 @@ export default class ProductoService {
             categoriaIds = categorias.map(cat => cat._id)
         }
 
-        const { items, total } = await this.productoRepository.buscarProductosDeVendedor({
+        // Filtro explícito de categoría (por id o por nombre)
+        let categoriaId
+        if (categoria) {
+            if (/^[0-9a-fA-F]{24}$/.test(categoria)) {
+                categoriaId = categoria
+            } else {
+                const encontradas = await this.categoriaRepository.getCategoriasByNombre(categoria)
+                categoriaId = encontradas[0]?._id
+            }
+        }
+
+        const { items, total } = await this.productoRepository.buscarProductos({
             vendedorId,
             q,
             precioMin: precioMin !== undefined ? Number(precioMin) : undefined,
             precioMax: precioMax !== undefined ? Number(precioMax) : undefined,
             categoriaIds,
+            categoriaId,
+            incluirInactivos: incluirInactivos === true || incluirInactivos === 'true',
             page: Number(page),
             limit: Number(limit),
             orden

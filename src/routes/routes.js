@@ -6,6 +6,7 @@ import productoRoutes from "../routes/productoRoutes.js"
 import usuarioProductoRoutes from "../routes/usuarioProductoRoutes.js"
 import pedidoRoutes from "../routes/pedidoRoutes.js"
 import usuarioPedidoRoutes from "../routes/usuarioPedidoRoutes.js"
+import usuarioVentaRoutes from "../routes/usuarioVentaRoutes.js"
 import notificacionRoutes from "../routes/notificacionRoutes.js"
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
     { basePath: "/pedidos", routerFunction: pedidoRoutes },
     { basePath: "/usuarios/:id/productos", routerFunction: usuarioProductoRoutes },
     { basePath: "/usuarios/:id/pedidos", routerFunction: usuarioPedidoRoutes },
+    { basePath: "/usuarios/:id/ventas", routerFunction: usuarioVentaRoutes },
     { basePath: "/usuarios/:usuarioId/notificaciones", routerFunction: notificacionRoutes },
     { basePath: "/usuarios", routerFunction: usuarioRoutes }
 ]

@@ -22,7 +22,7 @@ describe('ProductoService', () => {
             createProducto: jest.fn(),
             updateProductoById: jest.fn(),
             deleteProductoById: jest.fn(),
-            buscarProductosDeVendedor: jest.fn()
+            buscarProductos: jest.fn()
         };
         mockUsuarioRepository = { getUsuarioById: jest.fn() };
         mockCategoriaRepository = { getCategoriasByNombre: jest.fn() };
@@ -90,27 +90,54 @@ describe('ProductoService', () => {
         });
     });
 
+    describe('buscarProductos (catálogo global)', () => {
+        test('Debe devolver una página de productos de todo el marketplace', async () => {
+            mockProductoRepository.buscarProductos.mockResolvedValue({
+                items: [{ _id: productoId, titulo: 'Auriculares' }],
+                total: 1
+            });
+            const result = await productoService.buscarProductos({ page: 1, limit: 10 });
+            expect(result.status).toBe(200);
+            expect(result.data.items).toHaveLength(1);
+            expect(result.data.totalPaginas).toBe(1);
+            // Sin vendedorId al ser búsqueda global
+            expect(mockProductoRepository.buscarProductos).toHaveBeenCalledWith(
+                expect.objectContaining({ vendedorId: undefined })
+            );
+        });
+
+        test('Debe resolver el filtro de categoría por nombre', async () => {
+            mockCategoriaRepository.getCategoriasByNombre.mockResolvedValue([{ _id: 'cat1' }]);
+            mockProductoRepository.buscarProductos.mockResolvedValue({ items: [], total: 0 });
+            await productoService.buscarProductos({ categoria: 'Electrónica' });
+            expect(mockProductoRepository.buscarProductos).toHaveBeenCalledWith(
+                expect.objectContaining({ categoriaId: 'cat1' })
+            );
+        });
+    });
+
     describe('buscarProductosDeVendedor', () => {
         test('Debe devolver una página de productos del vendedor', async () => {
             mockUsuarioRepository.getUsuarioById.mockResolvedValue({ _id: vendedorId, tipo: 'VENDEDOR' });
-            mockProductoRepository.buscarProductosDeVendedor.mockResolvedValue({
+            mockProductoRepository.buscarProductos.mockResolvedValue({
                 items: [{ _id: productoId, titulo: 'Auriculares' }],
                 total: 1
             });
             const result = await productoService.buscarProductosDeVendedor(vendedorId, { page: 1, limit: 10 });
             expect(result.status).toBe(200);
             expect(result.data.items).toHaveLength(1);
-            expect(result.data.total).toBe(1);
-            expect(result.data.totalPaginas).toBe(1);
+            expect(mockProductoRepository.buscarProductos).toHaveBeenCalledWith(
+                expect.objectContaining({ vendedorId })
+            );
         });
 
         test('Debe resolver categorías cuando hay término de búsqueda', async () => {
             mockUsuarioRepository.getUsuarioById.mockResolvedValue({ _id: vendedorId });
             mockCategoriaRepository.getCategoriasByNombre.mockResolvedValue([{ _id: 'cat1' }]);
-            mockProductoRepository.buscarProductosDeVendedor.mockResolvedValue({ items: [], total: 0 });
+            mockProductoRepository.buscarProductos.mockResolvedValue({ items: [], total: 0 });
             await productoService.buscarProductosDeVendedor(vendedorId, { q: 'electro' });
             expect(mockCategoriaRepository.getCategoriasByNombre).toHaveBeenCalledWith('electro');
-            expect(mockProductoRepository.buscarProductosDeVendedor).toHaveBeenCalledWith(
+            expect(mockProductoRepository.buscarProductos).toHaveBeenCalledWith(
                 expect.objectContaining({ categoriaIds: ['cat1'] })
             );
         });

@@ -10,6 +10,7 @@ export default function productoRoutes(getController) {
     const router = express.Router()
     const controller = getController(ProductoController)
 
+    router.get(pathProductos, (req, res, next) => controller.buscarProductos(req, res, next))
     router.get(pathProductoById, (req, res, next) => controller.getProductoById(req, res, next))
     router.post(pathProductos, authMiddleware, requireRol(TipoUsuario.VENDEDOR), (req, res, next) => controller.createProducto(req, res, next))
     router.put(pathProductoById, authMiddleware, requireRol(TipoUsuario.VENDEDOR), (req, res, next) => controller.updateProducto(req, res, next))

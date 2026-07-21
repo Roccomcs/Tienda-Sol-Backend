@@ -69,6 +69,7 @@ export class Server {
             console.log(`   GET     http://${host}:${port}/categorias`);
             console.log(`   POST    http://${host}:${port}/categorias`);
             console.log(`\n---------------------------PRODUCTOS------------------------`);
+            console.log(`   GET     http://${host}:${port}/productos`);
             console.log(`   GET     http://${host}:${port}/productos/:id`);
             console.log(`   POST    http://${host}:${port}/productos`);
             console.log(`   PUT     http://${host}:${port}/productos/:id`);
@@ -79,6 +80,7 @@ export class Server {
             console.log(`   PATCH   http://${host}:${port}/pedidos/:id/enviar`);
             console.log(`   PATCH   http://${host}:${port}/pedidos/:id/cancelar`);
             console.log(`   GET     http://${host}:${port}/usuarios/:id/pedidos`);
+            console.log(`   GET     http://${host}:${port}/usuarios/:id/ventas`);
             console.log(`\n-------------------------NOTIFICACIONES---------------------`);
             console.log(`   GET     http://${host}:${port}/usuarios/:usuarioId/notificaciones`);
             console.log(`   PATCH   http://${host}:${port}/usuarios/:usuarioId/notificaciones/:notificacionId`);

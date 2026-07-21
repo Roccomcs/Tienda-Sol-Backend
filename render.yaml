@@ -1,0 +1,21 @@
+# Blueprint de Render para el backend de Tienda Sol.
+# En Render: New > Blueprint, apuntá a este repo. Cargá las variables marcadas sync:false.
+services:
+  - type: web
+    name: tienda-sol-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: MONGODB_CONNECTION_STRING   # cadena de conexión de MongoDB Atlas (incluye la base)
+        sync: false
+      - key: JWT_SECRET                  # secreto para firmar los JWT
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: FRONTEND_URL                # URL del frontend en Netlify (para CORS)
+        sync: false
+      - key: NODE_ENV
+        value: production
